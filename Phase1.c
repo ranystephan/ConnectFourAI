@@ -47,7 +47,9 @@ void tossCoin(char **playerNames){
   int headsOrTails = rand() % 2; 
 
   if (headsOrTails == 1){
-    printf("%s, the coin chose you! \n You may start playing!\n", playerNames[0]);
+    printf("%s, the coin chose you! \nYou may start playing!\n", playerNames[0]);
+  }else {
+    printf("%s, the coin chose you! \nYou may start playing!\n", playerNames[1]);
   }
 }
 
@@ -57,7 +59,7 @@ int main(){
   char namePlayer2[20];
   printf("Please Enter Your Name Player1: ");
   scanf("%s", namePlayer1);
-  printf("\n Please Enter Your Name Player2: ");
+  printf("\nPlease Enter Your Name Player2: ");
   scanf("%s", namePlayer2);
   printf("Welcome %s \n", namePlayer1);
   printf("Welcome %s \n", namePlayer2);
