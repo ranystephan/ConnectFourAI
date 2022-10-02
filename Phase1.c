@@ -1,20 +1,62 @@
 #include <stdio.h>  /* needed to call prinf() and scanf() */
 #include <stdlib.h> /* needed to call srand() and rand() */
 #include <time.h> /* needed to call time */
-//Display the initial game board
-void boardDisplay() {
 
+
+char board[6][7]; //board as a global variable
+
+char namePlayer1[20];
+char namePlayer2[20];
+
+void resetBoard();
+void displayBoard();
+void tossCoin();
+void playerMove();
+char checkWinner(char);
+int checkFreeSpaces();
+void askPlayerNames();
+
+
+int main()
+{
+  char winner = ' ';
+
+  resetBoard();
+  askPlayerNames();
+  tossCoin(namePlayer1, namePlayer2);
+
+
+  while (winner == ' ' && checkFreeSpaces() != 0 )
+    {
+      displayBoard();
+      playerMove();
+
+
+    }
+
+}
+
+
+
+
+void resetBoard()
+{
+
+  for (int i = 0; i < 6; i++)
+    {
+      for (int j = 0; j < 7; j++)
+        {
+          board[i][j] = 0;
+        }
+    }
+}
+
+
+
+void displayBoard()
+{
+  printf("|1||2||3||4||5||6||7|\n");
   printf("---------------------\n");
-
-  int board[6][7] = {
-  {0, 0, 0, 0, 0, 0, 0},
-  {0, 0, 0, 0, 0, 0, 0}, 
-  {0, 0, 0, 0, 0, 0, 0}, 
-  {0, 0, 0, 0, 0, 0, 0},
-  {0, 0, 0, 0, 0, 0, 0}, 
-  {0, 0, 0, 0, 0, 0, 0}
-  };
-
   int row, column = 0;
 
   for (row=0; row < 6; row++){
@@ -27,46 +69,68 @@ void boardDisplay() {
   printf("---------------------\n");
 }
 
-void askPlayerNames(){
-// Ask the names of the players
-  /* char namePlayer1[20];
-  char namePlayer2[20];
-  printf("Please Enter Your Name Player1: ");
-  scanf("%s", namePlayer1);
-  printf("\n Please Enter Your Name Player2: ");
-  scanf("%s", namePlayer2);
-  printf("Welcome %s \n", namePlayer1);
-  printf("Welcome %s \n", namePlayer2);
+int checkFreeSpaces()
+{
+  int freeSpaces = 42;
 
-  char playerNames[2][20] = {*namePlayer1, *namePlayer2}; */
+  for (int i = 0; i < 6; i++)
+    {
+      for (int j = 0; j < 7; j++)
+        {
+          if (board[i][j] != 0)
+          {
+            freeSpaces--;
+          }
+        }
+    }
 
+  return freeSpaces;
 }
 
-void tossCoin(char **playerNames){
+void askPlayerNames()
+{
+  //Asking player names
+  printf("Please Enter Your Name Player1: ");
+  scanf("%s", namePlayer1);
+  printf("Please Enter Your Name Player2: ");
+  scanf("%s", namePlayer2);
+  printf("\n");
+  printf("Welcome %s, and %s!\n", namePlayer1, namePlayer2);
+}
+
+void tossCoin()
+{
   srand(time(NULL));
   int headsOrTails = rand() % 2; 
 
   if (headsOrTails == 1){
-    printf("%s, the coin chose you! \nYou may start playing!\n", playerNames[0]);
+    printf("%s, the coin chose you! You may start playing!\n\n", namePlayer1);
   }else {
-    printf("%s, the coin chose you! \nYou may start playing!\n", playerNames[1]);
+    printf("%s, the coin chose you! You may start playing!\n\n", (namePlayer2));
   }
 }
 
-int main(){
-// Ask the names of the players
-  char namePlayer1[20];
-  char namePlayer2[20];
-  printf("Please Enter Your Name Player1: ");
-  scanf("%s", namePlayer1);
-  printf("\nPlease Enter Your Name Player2: ");
-  scanf("%s", namePlayer2);
-  printf("Welcome %s \n", namePlayer1);
-  printf("Welcome %s \n", namePlayer2);
 
-  char *playerNames[2] = {namePlayer1, namePlayer2};
-  askPlayerNames();
-  boardDisplay();
-  tossCoin(playerNames);
 
-  }
+void playerMove()
+{
+  int columnNumber;
+
+  printf("Please, enter column #(1 - 7): ");
+  scanf("%d", &columnNumber);
+  columnNumber--;
+
+  do
+  {
+    //check if column is full or not
+    if (board[0][columnNumber] != 0)
+    {
+      printf("Column full!\n");
+    }
+    else
+    {
+      board[0][columnNumber] = 1;
+    }
+  } while(board[0][columnNumber] == 0);
+}
+
