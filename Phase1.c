@@ -8,103 +8,99 @@ char board[6][7]; //board as a global variable
 char namePlayer1[20];
 char namePlayer2[20];
 
+
+//Amount of empty spaces in each coloumn
 int columnHeight[7] = {5,5,5,5,5,5,5};
 
-
+//All methods needed for the program
 void resetBoard();
 void displayBoard();
 void tossCoin();
 void player1Move();
 void player2Move();
-char checkWinner(char);
+int checkWinner();
 int checkFreeSpaces();
 void askPlayerNames();
-void checkVeritcal();
-void checkHorizontal();
+int checkVertical();
+int checkHorizontal();
 
 
 int main()
 {
-  char winner = ' ';
+  int winner = 0;
 
   resetBoard();
   askPlayerNames();
   tossCoin(namePlayer1, namePlayer2);
 
 
-  while (winner == ' ' && checkFreeSpaces() != 0 )
+  while (winner == 0 && checkFreeSpaces() != 0 )
     {
       displayBoard();
       player1Move();
+        winner = checkWinner();
+        if (winner != 0){
+            printf("Congratulations, %s, you won!", namePlayer1);
+            break;
+        }
       displayBoard();
       player2Move();
+        winner = checkWinner();
+        if (winner != 0){
+            printf("Congratulations, %s, you won!", namePlayer2);
+            break;
+        }
+        
       winner = checkWinner(winner); //error with comparison pointer and integer in checkHorizontal and checkVertical
     }
-  printf("Congratulations, %c, you won!", winner);
+  
 
 }
 
-char checkWinner(char winner)
+int checkWinner()
 {
-  if (checkHorizontal != ' ')
+  if (checkHorizontal() != 0)
   {
-    return checkHorizontal;
+    return 1;
   }
-  else if (checkVertical != ' ')
+  else if (checkVertical() != 0)
   {
-    return checkVertical;
+    return 1;
+  }
+  else{
+      return 0;
   }
 }
 
-char checkHorizontal(char winner)
+int checkHorizontal()
 {
   for (int row = 0; row <= 5; row++)
   {
     for (int col = 0; col <= 3; col++)
     {
-      if (board[row][col] == 1 && board[row][col + 1] == 1 && board[row][col + 2] == 1 && board[row][col + 3] == 1)
+      if (board[row][col] == board[row][col + 1] &&  board[row][col + 2] == board[row][col + 3] && board[row][col] == board[row][col + 3] && board[row][col] != 0)
           {
-            winner = '1';
-            return winner;
+            return 1;
           }
-      else if (board[row][col] == 2 && board[row][col + 1] == 2 && board[row][col + 2] == 2 && board[row][col + 3] == 2)
-          {
-            winner = '2';
-            return winner;
-          }
-      else
-          {
-            return ' ';
-          }
-      
     }
   }
+    return 0;
 }
 
 
-char checkVertical(char winner) //error here
+int checkVertical() //error here
 {
   for (int col = 0; col <= 6; col++)
   {
     for (int row = 0; row <= 2; row++)
     {
-          if (board[row][col] == 1 && board[row + 1][col] == 1 && board[row + 2][col] == 1 && board[row + 3][col] == 1)
+          if (board[row][col] == board[row + 1][col] && board[row + 2][col] == board[row + 3][col] && board[row][col] == board[row + 3][col] && board[row][col] != 0)
           {
-            winner = '1';
-            return winner;
+            return 1;
           }
-      else if (board[row][col] == 2 && board[row + 1][col] == 2 && board[row + 2][col] == 2 && board[row + 3][col] == 2)
-          {
-            winner = '2';
-            return winner;
-          }
-      else
-          {
-            return ' ';
-          }
-      
     }
   }
+    return 0;
 }
 
 
@@ -170,7 +166,7 @@ void askPlayerNames()
 void tossCoin()
 {
   srand(time(NULL));
-  int headsOrTails = rand() % 2; 
+  int headsOrTails = rand() % 2;
 
   if (headsOrTails == 1){
     printf("%s, the coin chose you! You may start playing!\n\n", namePlayer1);
@@ -233,3 +229,4 @@ void player2Move()
     }
   } while(board[0][columnNumber] == 0);
 }
+
