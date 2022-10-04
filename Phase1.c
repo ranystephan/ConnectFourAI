@@ -2,6 +2,7 @@
 #include <stdlib.h> /* needed to call srand() and rand() */
 #include <time.h> /* needed to call time */
 
+char pizza[4];
 
 char board[6][7]; //board as a global variable
 
