@@ -15,7 +15,7 @@ int columnHeight[7] = {5,5,5,5,5,5,5};
 //All methods needed for the program
 void resetBoard();
 void displayBoard();
-void tossCoin();
+int tossCoin();
 void player1Move();
 void player2Move();
 int checkWinner();
@@ -31,22 +31,34 @@ int main()
 
   resetBoard();
   askPlayerNames();
-  tossCoin(namePlayer1, namePlayer2);
+  int first=tossCoin(namePlayer1, namePlayer2);
 
 
   while (winner == 0 && checkFreeSpaces() != 0 )
     {
       displayBoard();
-      player1Move();
+      if (first==1){ // for checking which player goes first according to the toss
+        player1Move();
+      }
+      else{
+        player2Move();
+      }
         winner = checkWinner();
         if (winner != 0){
+            displayBoard(); // for displaying the board after the final move 
             printf("Congratulations, %s, you won!", namePlayer1);
             break;
         }
       displayBoard();
-      player2Move();
+      if (first==2){ // for checking which player goes second according to the toss
+        player1Move();
+      }
+      else{
+        player2Move();
+      }
         winner = checkWinner();
         if (winner != 0){
+            displayBoard(); // for displaying the board after the final move 
             printf("Congratulations, %s, you won!", namePlayer2);
             break;
         }
@@ -163,15 +175,18 @@ void askPlayerNames()
   printf("Welcome %s, and %s!\n", namePlayer1, namePlayer2);
 }
 
-void tossCoin()
+int tossCoin()
 {
   srand(time(NULL));
   int headsOrTails = rand() % 2;
 
   if (headsOrTails == 1){
     printf("%s, the coin chose you! You may start playing!\n\n", namePlayer1);
+    return 1;
+  
   }else {
     printf("%s, the coin chose you! You may start playing!\n\n", (namePlayer2));
+    return 2;
     
   }
 }
@@ -187,6 +202,7 @@ void player1Move()
   {
     printf("Please, enter column #(1 - 7): ");
     scanf("%d", &columnNumber);
+    printf("\n");
     columnNumber--;
 
     //check if column is full or not
