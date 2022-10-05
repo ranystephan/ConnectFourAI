@@ -50,8 +50,6 @@ int main()
             printf("Congratulations, %s, you won!", namePlayer2);
             break;
         }
-        
-      winner = checkWinner(winner); //error with comparison pointer and integer in checkHorizontal and checkVertical
     }
   
 
@@ -201,7 +199,7 @@ void player1Move()
       break;
 
     }
-  } while(board[0][columnNumber] == 0);
+  } while(board[0][columnNumber] != 0);
 }
 
 void player2Move()
@@ -227,6 +225,6 @@ void player2Move()
       break;
 
     }
-  } while(board[0][columnNumber] == 0);
+  } while(board[0][columnNumber] != 0);
 }
 
