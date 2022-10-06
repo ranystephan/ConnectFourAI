@@ -39,29 +39,43 @@ int main()
       displayBoard();
       if (first==1){ // for checking which player goes first according to the toss
         player1Move();
-      }
-      else{
-        player2Move();
-      }
         winner = checkWinner();
         if (winner != 0){
             displayBoard(); // for displaying the board after the final move 
             printf("Congratulations, %s, you won!", namePlayer1);
             break;
         }
-      displayBoard();
-      if (first==2){ // for checking which player goes second according to the toss
-        player1Move();
       }
       else{
         player2Move();
-      }
         winner = checkWinner();
         if (winner != 0){
             displayBoard(); // for displaying the board after the final move 
             printf("Congratulations, %s, you won!", namePlayer2);
             break;
         }
+      }
+
+      displayBoard();
+      if (first==2){ // for checking which player goes second according to the toss
+        player1Move();
+        winner = checkWinner();
+        if (winner != 0){
+            displayBoard(); // for displaying the board after the final move 
+            printf("Congratulations, %s, you won!", namePlayer1);
+            break;
+        }
+      }
+      else{
+        player2Move();
+        winner = checkWinner();
+        if (winner != 0){
+            displayBoard(); // for displaying the board after the final move 
+            printf("Congratulations, %s, you won!", namePlayer2);
+            break;
+        }
+      }
+        
         
       winner = checkWinner(winner); //error with comparison pointer and integer in checkHorizontal and checkVertical
     }
@@ -79,6 +93,7 @@ int checkWinner()
   {
     return 1;
   }
+  
   else{
       return 0;
   }
