@@ -1,3 +1,6 @@
+// Github Repo: ranystephan/ConnectFourAI
+// https://github.com/ranystephan/ConnectFourAI
+
 #include <stdio.h>  /* needed to call prinf() and scanf() */
 #include <stdlib.h> /* needed to call srand() and rand() */
 #include <time.h> /* needed to call time */
