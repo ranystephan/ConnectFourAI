@@ -23,6 +23,8 @@ int checkFreeSpaces();
 void askPlayerNames();
 int checkVertical();
 int checkHorizontal();
+int checkDiagonal1();
+int checkDiagonal2();
 
 
 int main()
@@ -44,8 +46,9 @@ int main()
             displayBoard(); // for displaying the board after the final move 
             printf("Congratulations, %s, you won!", namePlayer1);
             break;
-        }
       }
+      }
+      
       else{
         player2Move();
         winner = checkWinner();
@@ -67,6 +70,7 @@ int main()
         }
       }
       else{
+        printf("%d\n",first);
         player2Move();
         winner = checkWinner();
         if (winner != 0){
@@ -83,6 +87,7 @@ int main()
 
 }
 
+
 int checkWinner()
 {
   if (checkHorizontal() != 0)
@@ -91,6 +96,12 @@ int checkWinner()
   }
   else if (checkVertical() != 0)
   {
+    return 1;
+  }
+  else if(checkDiagonal1() !=0){
+    return 1;
+  }
+  else if(checkDiagonal2() !=0){
     return 1;
   }
   
@@ -113,7 +124,27 @@ int checkHorizontal()
   }
     return 0;
 }
+int checkDiagonal1(){
+    for(int j = 0; j < 4; ++j){
+        for(int i = 0; i < 3; ++i){
+            if(board[i+j][i] == board[i+j+1][i+1] && board[i+j][i] == board[i+2+j][i+2] && board[i+j][i] == board[i+3+j][i+3] && board[i+j][i] != 0){
+                return 1;
+              }
+         }
+  }
+    return 0;
+}
 
+int checkDiagonal2(){
+  for(int j = 0; j < 4; ++j){
+      for(int i = 3; i < 5; ++i){
+          if(board[j][i] == board[j+1][i-1] && board[j][i] == board[j+2][i-2] && board[j][i] == board[j+3][i-3] && board[j][i] != 0){
+              return 1;
+          }
+      }
+    }
+    return 0;
+}
 
 int checkVertical() //error here
 {
