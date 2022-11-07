@@ -116,7 +116,10 @@ int main()
       }
 }
 
-
+// Requires: nothing
+// Modifies: nothing
+// Effects: checks if there is a winner. Returns 1 if there is a winner, 0 if there is no winner.
+// Testing Strategy: tested with a board with a winner, a board with no winner, and a board with a tie.
 int checkWinner()
 {
   if (checkHorizontal() != 0)
@@ -137,8 +140,13 @@ int checkWinner()
   else{
       return 0;
   }
+  // Test cases: 
 }
 
+// Requires: nothing
+// Modifies: nothing
+// Effects: checks if there is a winner horizontally. Returns 1 if there is a winner, 0 if there is no winner.
+// Testing Strategy: tested with a board with a winner, a board with no winner, and a board with a tie.
 int checkHorizontal()
 {
   for (int row = 0; row <= 5; row++)
@@ -153,17 +161,26 @@ int checkHorizontal()
   }
     return 0;
 }
+
+// Requires: nothing
+// Modifies: nothing
+// Effects: checks if there is a winner on the first diagonal. Returns 1 if there is a winner, 0 if there is no winner.
+// Testing Strategy: tested with a board with a winner, a board with no winner, and a board with a tie.
 int checkDiagonal1(){
     for(int j = 0; j < 4; ++j){
         for(int i = 0; i < 3; ++i){
             if(board[i+j][i] == board[i+j+1][i+1] && board[i+j][i] == board[i+2+j][i+2] && board[i+j][i] == board[i+3+j][i+3] && board[i+j][i] != 0){
                 return 1;
               }
-         }
+        }
   }
     return 0;
 }
 
+// Requires: nothing
+// Modifies: nothing
+// Effects: checks if there is a winner on the second diagonal. Returns 1 if there is a winner, 0 if there is no winner.
+// Testing Strategy: tested with a board with a winner, a board with no winner, and a board with a tie.
 int checkDiagonal2(){
   for(int j = 0; j < 4; ++j){
       for(int i = 3; i < 5; ++i){
@@ -175,6 +192,11 @@ int checkDiagonal2(){
     return 0;
 }
 
+
+// Requires: nothing
+// Modifies: nothing
+// Effects: checks if there is a winner vertically. Returns 1 if there is a winner, 0 if there is no winner.
+// Testing Strategy: tested with a board with a winner, a board with no winner, and a board with a tie.
 int checkVertical()
 {
   for (int col = 0; col <= 6; col++)
@@ -190,7 +212,10 @@ int checkVertical()
     return 0;
 }
 
-
+//Requires: nothing
+//Modifies: board
+//Effects: resets the board to all 0's
+//Testing Strategy: tested by running the program and checking if the board is reset
 void resetBoard()
 {
 
@@ -204,7 +229,10 @@ void resetBoard()
 }
 
 
-
+//Requires: nothing
+//Modifies: board
+//Effects: displays the board
+//Testing Strategy: tested by running the program and checking if the board is displayed correctly
 void displayBoard()
 {
   printf("|1||2||3||4||5||6||7|\n");
@@ -221,7 +249,13 @@ void displayBoard()
   printf("---------------------\n");
 }
 
+
 int checkFreeSpaces()
+// Requires: nothing
+// Modifies: nothing
+// Effects: checks if there are any free spaces on the board. Returns 1 if there are free spaces, 0 if there are no free spaces.
+// Testing Strategy: tested with a board with free spaces, a board with no free spaces, and a board with a tie.
+
 {
   int freeSpaces = 42;
 
@@ -239,7 +273,12 @@ int checkFreeSpaces()
   return freeSpaces;
 }
 
+
 void askPlayerNames()
+// Requires: nothing
+// Modifies: namePlayer1, namePlayer2
+// Effects: asks the user for the names of the players
+// Testing Strategy: tested by running the program and checking if the names are asked correctly
 {
   //Asking player names
   printf("Please Enter Your Name Player1: ");
@@ -250,7 +289,12 @@ void askPlayerNames()
   printf("Welcome %s, and %s!\n", namePlayer1, namePlayer2);
 }
 
+
 int tossCoin()
+// Requires: nothing
+// Modifies: nothing
+// Effects: tosses a coin to decide who starts first. Returns 1 if player 1 starts first, 2 if player 2 starts first.
+// Testing Strategy: tested by running the program and checking if the coin is tossed correctly
 {
   srand(time(NULL));
   int headsOrTails = rand() % 2;
@@ -267,7 +311,10 @@ int tossCoin()
 }
 
 
-
+//Requires: nothing
+//Modifies: board
+//Effects: asks the player to make a move
+//Testing Strategy: tested by running the program and checking if the move is made correctly
 void player1Move()
 {
   int columnNumber;
@@ -300,6 +347,11 @@ void player1Move()
   timePlayer1 += ((double)(end - start));
 }
 
+
+//Requires: nothing
+//Modifies: board
+//Effects: asks the player to make a move
+//Testing Strategy: tested by running the program and checking if the move is made correctly
 void player2Move()
 {
   int columnNumber;
@@ -332,3 +384,7 @@ void player2Move()
 
   
 }
+
+
+
+
