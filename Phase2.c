@@ -26,7 +26,9 @@ int columnHeight[7] = {5, 5, 5, 5, 5, 5, 5};
 #define CHOSENMODEMOVE if (mode == 1) { NoviceBotMove(); } else if (mode == 2) { AdvancedBotMove(); } else if (mode == 3)  { ExpertBotMove(); } else {player2Move();}
 #define NAMEPLAYER2 (mode == 1) ? nameNoviceBot : (mode == 2) ? nameAdvancedBot : (mode == 3) ? nameExpertBot : nameOpp
 
+
 struct minimaxReturn
+// This struct is used to return the best move and the score of the best move from the minimax function
 {
     int column;
     int score;
@@ -55,11 +57,12 @@ minimaxReturn minimax();
 
 
 
-    // Requires: nothing
-    // Modifies: board
-    // Effects: asks the player to make a move
-    // Testing Strategy: tested by running the program and checking if the move is made correctly
-    void playerMove()
+
+void playerMove()
+// Requires: nothing
+// Modifies: board
+// Effects: asks the player to make a move
+// Testing Strategy: tested by running the program and checking if the move is made correctly
 {
     int columnNumber;
     time_t start, end;
@@ -90,11 +93,12 @@ minimaxReturn minimax();
     timePlayer += ((double)(end - start));
 }
 
+
+void player2Move()
 // Requires: nothing
 // Modifies: board
 // Effects: asks the player to make a move
 // Testing Strategy: tested by running the program and checking if the move is made correctly
-void player2Move()
 {
     int columnNumber;
     time_t start, end;
@@ -124,8 +128,12 @@ void player2Move()
     timePlayer2 += ((double)(end - start));
 }
 
-// Write a function that creates a bot that plays the game
+// Function to make a move for the Novice Bot. Note that the Novice Bot is a random bot, and does not use any AI
 void NoviceBotMove()
+// Requires: nothing
+// Modifies: board
+// Effects: makes a move for the Novice Bot. 
+// Testing Strategy: tested by running the program and checking if the move is made correctly
 {
     int columnNumber;
     time_t start, end;
@@ -153,8 +161,12 @@ void NoviceBotMove()
     timePlayer2 += ((double)(end - start));
 }
 
-// AdvancedBotMove function that uses minimax algorithm with alpha-beta pruning
+// AdvancedBotMove function that uses minimax algorithm with alpha-beta pruning to find the best move to the depth assigned
 void AdvancedBotMove()
+// Requires: nothing
+// Modifies: board
+// Effects: executes the move of the advanced bot using the minimax algorithm with alpha-beta pruning, with depth of 3
+// Testing Strategy: tested by running the program and checking if the move is made correctly
 {
     int columnNumber;
     time_t start, end;
@@ -171,7 +183,14 @@ void AdvancedBotMove()
     timePlayer2 += ((double)(end - start));
 }
 
+
+// ExpertBotMove function that uses minimax algorithm with alpha-beta pruning to find the best move to the depth assigned
 void ExpertBotMove()
+// Requires: nothing
+// Modifies: board
+// Effects: executes the move of the expert bot taken from the minimax algorithm
+// Testing Strategy: tested by running the program and checking if the move is made correctly
+
 {
     int columnNumber;
     time_t start, end;
@@ -221,11 +240,12 @@ void askPlayerNameAndMode()
 
 }
 
+
+int checkWinner()
 // Requires: nothing
 // Modifies: nothing
 // Effects: checks if there is a winner. Returns 1 if there is a winner, 0 if there is no winner.
 // Testing Strategy: tested with a board with a winner, a board with no winner, and a board with a tie.
-int checkWinner()
 {
     if (checkHorizontal() != 0)
     {
@@ -250,11 +270,12 @@ int checkWinner()
     }
 }
 
+
+int checkHorizontal()
 // Requires: nothing
 // Modifies: nothing
 // Effects: checks if there is a winner horizontally. Returns 1 if there is a winner, 0 if there is no winner.
 // Testing Strategy: tested with a board with a winner, a board with no winner, and a board with a tie.
-int checkHorizontal()
 {
     for (int row = 0; row <= 5; row++)
     {
@@ -269,11 +290,12 @@ int checkHorizontal()
     return 0;
 }
 
+
+int checkDiagonal1()
 // Requires: nothing
 // Modifies: nothing
 // Effects: checks if there is a winner on the first diagonal. Returns 1 if there is a winner, 0 if there is no winner.
 // Testing Strategy: tested with a board with a winner, a board with no winner, and a board with a tie.
-int checkDiagonal1()
 {
     for (int j = 0; j < 4; ++j)
     {
@@ -288,11 +310,12 @@ int checkDiagonal1()
     return 0;
 }
 
+
+int checkDiagonal2()
 // Requires: nothing
 // Modifies: nothing
 // Effects: checks if there is a winner on the second diagonal. Returns 1 if there is a winner, 0 if there is no winner.
 // Testing Strategy: tested with a board with a winner, a board with no winner, and a board with a tie.
-int checkDiagonal2()
 {
     for (int j = 0; j < 4; ++j)
     {
@@ -307,11 +330,12 @@ int checkDiagonal2()
     return 0;
 }
 
+
+int checkVertical()
 // Requires: nothing
 // Modifies: nothing
 // Effects: checks if there is a winner vertically. Returns 1 if there is a winner, 0 if there is no winner.
 // Testing Strategy: tested with a board with a winner, a board with no winner, and a board with a tie.
-int checkVertical()
 {
     for (int col = 0; col <= 6; col++)
     {
@@ -326,11 +350,12 @@ int checkVertical()
     return 0;
 }
 
+
+void resetBoard()
 // Requires: nothing
 // Modifies: board
 // Effects: resets the board to all 0's
 // Testing Strategy: tested by running the program and checking if the board is reset
-void resetBoard()
 {
 
     for (int i = 0; i < 6; i++)
@@ -343,11 +368,12 @@ void resetBoard()
 }
 
 
+
+void displayBoard()
 // Requires: nothing
 // Modifies: board
 // Effects: displays the board
 // Testing Strategy: tested by running the program and checking if the board is displayed correctly
-void displayBoard()
 {
     printf("|1||2||3||4||5||6||7|\n");
     printf("---------------------\n");
@@ -365,11 +391,12 @@ void displayBoard()
     printf("---------------------\n");
 }
 
+
+int checkFreeSpaces()
 // Requires: nothing
 // Modifies: nothing
 // Effects: checks if there are any free spaces on the board. Returns 1 if there are free spaces, 0 if there are no free spaces.
 // Testing Strategy: tested with a board with free spaces, a board with no free spaces, and a board with a tie.
-int checkFreeSpaces()
 {
     int freeSpaces = 42;
 
@@ -387,11 +414,12 @@ int checkFreeSpaces()
     return freeSpaces;
 }
 
+
+int tossCoin()
 // Requires: nothing
 // Modifies: nothing
 // Effects: tosses a coin to decide who starts first. Returns 1 if Player starts first, 2 if player 2 starts first.
 // Testing Strategy: tested by running the program and checking if the coin is tossed correctly
-int tossCoin()
 {
     srand(time(NULL));
     int headsOrTails = rand() % 2;
@@ -416,11 +444,12 @@ int tossCoin()
     }
 }
 
+
+int checkWinningSide(int side)
 // Requires: side is either 1 or 2
 // Modifies: nothing
 // Effects: checks if there is a winner horizontally. Returns 1 if there is a winner, 0 if there is no winner.
 // Testing Strategy: tested with a board with a winner, a board with no winner, and a board with a tie.
-int checkWinningSide(int side)
 {
 
     int winningSide = 0;
@@ -478,12 +507,12 @@ int checkWinningSide(int side)
 
 
 
-// minimax algorithm with alpha-beta pruning for the bot
-// Requires : nothing
-// Modifies : nothing
-// Effects : returns the best move for the bot
-// Testing Strategy : tested by running the program and checking if the bot makes the best move
+
 minimaxReturn minimax(int depth, int alpha, int beta, int maximizingPlayer)
+// Requires: depth is an integer, alpha and beta are integers, maximizingPlayer is either 1 or 2
+// Modifies: nothing
+// Effects: returns the best move for the computer
+// Testing Strategy: tested by running the program and checking if the computer makes the best move
 {
     minimaxReturn ret;
     int check = checkWinningSide(2) - checkWinningSide(1);
