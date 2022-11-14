@@ -26,6 +26,12 @@ int columnHeight[7] = {5, 5, 5, 5, 5, 5, 5};
 #define CHOSENMODEMOVE if (mode == 1) { NoviceBotMove(); } else if (mode == 2) { AdvancedBotMove(); } else if (mode == 3)  { ExpertBotMove(); } else {player2Move();}
 #define NAMEPLAYER2 (mode == 1) ? nameNoviceBot : (mode == 2) ? nameAdvancedBot : (mode == 3) ? nameExpertBot : nameOpp
 
+struct minimaxReturn
+{
+    int column;
+    int score;
+};
+typedef struct minimaxReturn minimaxReturn;
 
 // All methods needed for the program
 void resetBoard();
@@ -36,6 +42,7 @@ void player2Move();
 void NoviceBotMove();
 void AdvancedBotMove();
 void ExpertBotMove();
+int evaluateForAI();
 int checkWinner();
 int checkFreeSpaces();
 void askPlayerNameAndMode();
@@ -43,7 +50,7 @@ int checkVertical();
 int checkHorizontal();
 int checkDiagonal1();
 int checkDiagonal2();
-int minimax();
+minimaxReturn minimax();
 
 
 
@@ -154,25 +161,8 @@ void AdvancedBotMove()
 
     printf("Advanced Bot is now playing...\n\n");
     start = time(NULL);
-    int bestScore = -1000;
 
-    for (int i = 0; i < 7; i++)
-    {
-        if (board[0][i] == 0)
-        {
-            board[columnHeight[i]][i] = 2;
-            columnHeight[i]--;
-            int score = minimax(4, -1000, 1000, 0);
-            board[columnHeight[i] + 1][i] = 0;
-            columnHeight[i]++;
-
-            if (score > bestScore)
-            {
-                bestScore = score;
-                columnNumber = i;
-            }
-        }
-    }
+    columnNumber = minimax(3, -1000, 1000, 0).column;
 
     board[columnHeight[columnNumber]][columnNumber] = 2;
     columnHeight[columnNumber]--;
@@ -188,25 +178,10 @@ void ExpertBotMove()
 
     printf("Expert Bot is now playing...\n\n");
     start = time(NULL);
-    int bestScore = -1000;
 
-    for (int i = 0; i < 7; i++)
-    {
-        if (board[0][i] == 0)
-        {
-            board[columnHeight[i]][i] = 2;
-            columnHeight[i]--;
-            int score = minimax(10, -1000, 1000, 0);
-            board[columnHeight[i] + 1][i] = 0;
-            columnHeight[i]++;
+    columnNumber = minimax(10, -1000, 1000, 0).column;
 
-            if (score > bestScore)
-            {
-                bestScore = score;
-                columnNumber = i;
-            }
-        }
-    }
+    printf("Column number: %d \n", columnNumber);
 
     board[columnHeight[columnNumber]][columnNumber] = 2;
     columnHeight[columnNumber]--;
@@ -441,19 +416,13 @@ int tossCoin()
     }
 }
 
-
-
-
-
-
-
-// function that checks if this side is winning
-// Requires: nothing
+// Requires: side is either 1 or 2
 // Modifies: nothing
-// Effects: checks if the game is a tie. Returns 1 if the game is a tie, 0 if the game is not a tie.
+// Effects: checks if there is a winner horizontally. Returns 1 if there is a winner, 0 if there is no winner.
 // Testing Strategy: tested with a board with a winner, a board with no winner, and a board with a tie.
 int checkWinningSide(int side)
 {
+
     int winningSide = 0;
 
     // check horizontal
@@ -508,23 +477,57 @@ int checkWinningSide(int side)
 }
 
 
+
 // minimax algorithm with alpha-beta pruning for the bot
 // Requires : nothing
 // Modifies : nothing
 // Effects : returns the best move for the bot
 // Testing Strategy : tested by running the program and checking if the bot makes the best move
-int minimax(int depth, int alpha, int beta, int maximizingPlayer)
+minimaxReturn minimax(int depth, int alpha, int beta, int maximizingPlayer)
 {
-    int score = checkWinningSide(2) - checkWinningSide(1);
+    minimaxReturn ret;
+    int check = checkWinningSide(2) - checkWinningSide(1);
 
-    if (depth == 0 || score == 1 || score == -1)
+    if (depth == 0 || check == 1 || check == -1)
     {
-        return score;
+        if (check == 1 || check == -1)
+        {
+            checkWinner();
+            if (check == 1)
+            {
+                ret.column = -2;
+                ret.score = 1000000;
+                return ret;
+            }
+            else if (check == -1)
+            {
+                ret.column = -2;
+                ret.score = -1000000;
+                return ret;
+            }
+            else // game is over, no more valid moves
+            {
+                ret.column = -2;
+                ret.score = 0;
+                return ret;
+            }
+        }
+        else // depth is zero
+        {
+            ret.column = -2;
+            ret.score = evaluateForAI();
+            return ret;
+        }
     }
 
-    if (maximizingPlayer)
+    if ( maximizingPlayer )
     {
-        int bestScore = -1000;
+        int bestScore = -1000000;
+        int col;
+
+        do
+            (col = rand() % 7);
+        while (board[0][col] != 0);
 
         for (int i = 0; i < 7; i++)
         {
@@ -532,11 +535,16 @@ int minimax(int depth, int alpha, int beta, int maximizingPlayer)
             {
                 board[columnHeight[i]][i] = 2;
                 columnHeight[i]--;
-                int score = minimax(depth - 1, alpha, beta, 0);
+                int score = minimax(depth - 1, alpha, beta, 0).score;
                 board[columnHeight[i] + 1][i] = 0;
                 columnHeight[i]++;
 
-                bestScore = max(bestScore, score);
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    col = i;
+                }
+
                 alpha = max(alpha, bestScore);
 
                 if (beta <= alpha)
@@ -545,12 +553,18 @@ int minimax(int depth, int alpha, int beta, int maximizingPlayer)
                 }
             }
         }
-
-        return bestScore;
+        ret.column = col;
+        ret.score = bestScore;
+        return ret;
     }
     else
     {
-        int bestScore = 1000;
+        int bestScore = 1000000;
+        int col;
+
+        do
+            (col = rand() % 7);
+        while (board[0][col] != 0);
 
         for (int i = 0; i < 7; i++)
         {
@@ -558,11 +572,16 @@ int minimax(int depth, int alpha, int beta, int maximizingPlayer)
             {
                 board[columnHeight[i]][i] = 1;
                 columnHeight[i]--;
-                int score = minimax(depth - 1, alpha, beta, 1);
+                int score = minimax(depth - 1, alpha, beta, 1).score;
                 board[columnHeight[i] + 1][i] = 0;
                 columnHeight[i]++;
 
-                bestScore = min(bestScore, score);
+                if (score < bestScore)
+                {
+                    bestScore = score;
+                    col = i;
+                }
+
                 beta = min(beta, bestScore);
 
                 if (beta <= alpha)
@@ -571,11 +590,123 @@ int minimax(int depth, int alpha, int beta, int maximizingPlayer)
                 }
             }
         }
-
-        return bestScore;
+        ret.column = col;
+        ret.score = bestScore;
+        return ret;
     }
 }
 
+// function that evaluates the position for each player and gives a score based on the favorability of the position
+int evaluateForAI()
+{
+    int score = 0;
+
+    // check horizontal
+    for (int i = 0; i < 6; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            if (board[i][j] == 2 && board[i][j + 1] == 2 && board[i][j + 2] == 2 && board[i][j + 3] == 2)
+            {
+                score += 100;
+            }
+            else if (board[i][j] == 2 && board[i][j + 1] == 2 && board[i][j + 2] == 2)
+            {
+                score += 10;
+            }
+            else if (board[i][j] == 2 && board[i][j + 1] == 2)
+            {
+                score += 2;
+            }
+
+            
+            else if (board[i][j] == 1 && board[i][j + 1] == 1 && board[i][j + 2] == 1)
+            {
+                score -= 100;
+            }
+        }
+    }
+
+    // check vertical
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 7; j++)
+        {
+            if (board[i][j] == 2 && board[i + 1][j] == 2 && board[i + 2][j] == 2 && board[i + 3][j] == 2)
+            {
+                score += 100;
+            } 
+            else if (board[i][j] == 2 && board[i + 1][j] == 2 && board[i + 2][j] == 2)
+            {
+                score += 10;
+            }
+            else if (board[i][j] == 2 && board[i + 1][j] == 2)
+            {
+                score += 2;
+            }
+
+            
+            else if (board[i][j] == 1 && board[i + 1][j] == 1 && board[i + 2][j] == 1)
+            {
+                score -= 100;
+            } 
+        }
+    }
+
+    // check diagonal
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            if (board[i][j] == 2 && board[i + 1][j + 1] == 2 && board[i + 2][j + 2] == 2 && board[i + 3][j + 3] == 2)
+            {
+                score += 100;
+            }
+            else if (board[i][j] == 2 && board[i + 1][j + 1] == 2 && board[i + 2][j + 2] == 2)
+            {
+                score += 10;
+            }
+            else if (board[i][j] == 2 && board[i + 1][j + 1] == 2)
+            {
+                score += 2;
+            }
+
+            
+            else if (board[i][j] == 1 && board[i + 1][j + 1] == 1 && board[i + 2][j + 2] == 1)
+            {
+                score -= 100;
+            }
+        }
+    }
+
+    // check diagonal
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 3; j < 7; j++)
+        {
+            if (board[i][j] == 2 && board[i + 1][j - 1] == 2 && board[i + 2][j - 2] == 2 && board[i + 3][j - 3] == 2)
+            {
+                score += 100;
+            }
+            else if (board[i][j] == 2 && board[i + 1][j - 1] == 2 && board[i + 2][j - 2] == 2)
+            {
+                score += 10;
+            }
+            else if (board[i][j] == 2 && board[i + 1][j - 1] == 2)
+            {
+                score += 2;
+            }
+
+            
+            else if (board[i][j] == 1 && board[i + 1][j - 1] == 1 && board[i + 2][j - 2] == 1)
+            {
+                score -= 100;
+            }
+        }
+    }
+
+    return score;
+}
 
 
 int main()
