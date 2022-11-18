@@ -23,13 +23,14 @@ int checkDiagonal1_AMR();
 int checkDiagonal2_AMR();
 
 
-
+//NOTE: OUR CODE WORKS CONSIDERING THE BOT MOVE IS 2 ON THE BOARD, since the maximizingPlayer is 2 (which is us)
 int make_move_AMR(int board[6][7])
 {
     int columnNumber = 0;
 
     columnNumber = minimax_AMR(board, 10, -10000000, 10000000, 2).column;
 
+    // Note: the clumn number is an index, so we need to add 1 to it to visualize it on the board
     printf("%d", columnNumber);
     return columnNumber;
 }
