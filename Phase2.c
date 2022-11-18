@@ -630,8 +630,13 @@ minimaxReturn minimax(int depth, int alpha, int beta, int maximizingPlayer)
     }
 }
 
+
 // evaluate window function 
 int evaluateWindow(int window[], int side)
+// Requires: window is an array of 4 integers, side is either 1 or 2
+// Modifies: nothing
+// Effects: returns the score of the window
+// Testing Strategy: tested by running the program and checking if the computer makes the best move
 {
     int score = 0;
     int oppSide = 3 - side;
@@ -677,8 +682,12 @@ int evaluateWindow(int window[], int side)
     return score;
 }
 
-// scorePosition function that evaluates the board
+// evaluateLine function that evaluates the board
 int evaluateLine()
+// Requires: nothing
+// Modifies: nothing
+// Effects: returns the score of the board
+// Testing Strategy: tested by running the program and checking if the computer makes the best move
 {
     int score = 0;
 
