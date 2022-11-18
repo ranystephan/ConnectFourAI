@@ -15,6 +15,9 @@ char *nameExpertBot = "Expert Bot";
 double timePlayer = 0;
 double timePlayer2 = 0;
 
+
+
+
 // Amount of empty spaces in each coloumn
 int columnHeight[7] = {5, 5, 5, 5, 5, 5, 5};
 
@@ -52,6 +55,7 @@ int checkHorizontal();
 int checkDiagonal1();
 int checkDiagonal2();
 minimaxReturn minimax();
+int evaluateLine();
 
 
 
@@ -137,10 +141,10 @@ void NoviceBotMove()
     int columnNumber;
     time_t start, end;
 
-    printf("Advanced Bot is now playing...\n\n");
+    printf("Novice Bot is now playing...\n\n");
     start = time(NULL);
 
-    columnNumber = minimax(1, -1000, 1000, 0).column;
+    columnNumber = minimax(1, -1000000, 1000000, 2).column;
 
     board[columnHeight[columnNumber]][columnNumber] = 2;
     columnHeight[columnNumber]--;
@@ -162,7 +166,7 @@ void AdvancedBotMove()
     printf("Advanced Bot is now playing...\n\n");
     start = time(NULL);
 
-    columnNumber = minimax(3, -1000, 1000, 0).column;
+    columnNumber = minimax(3, -1000000, 1000000, 2).column;
 
     board[columnHeight[columnNumber]][columnNumber] = 2;
     columnHeight[columnNumber]--;
@@ -183,15 +187,28 @@ void ExpertBotMove()
     int columnNumber;
     time_t start, end;
 
-    printf("Expert Bot is now playing...\n");
     start = time(NULL);
+    do
+    {
+        printf("\nExpert Bot is now playing...\n");
+        start = time(NULL);
 
-    columnNumber = minimax(9, -1000, 1000, 2).column;
+        columnNumber = minimax(11, -10000000, 10000000, 2).column;
 
-    printf("Column number: %d \n", columnNumber + 1);
 
-    board[columnHeight[columnNumber]][columnNumber] = 2;
-    columnHeight[columnNumber]--;
+        // check if column is full or not
+        if (board[0][columnNumber] != 0)
+        {
+            printf("Column full!\n");
+        }
+        else
+        {
+            printf("Column number: %d \n\n", columnNumber + 1);
+            board[columnHeight[columnNumber]][columnNumber] = 2;
+            columnHeight[columnNumber]--;
+            break;
+        }
+    } while (board[0][columnNumber] != 0);
     end = time(NULL);
 
     timePlayer2 += ((double)(end - start));
@@ -285,11 +302,11 @@ int checkDiagonal1()
 // Effects: checks if there is a winner on the first diagonal. Returns 1 if there is a winner, 0 if there is no winner.
 // Testing Strategy: tested with a board with a winner, a board with no winner, and a board with a tie.
 {
-    for (int j = 0; j < 4; ++j)
+    for (int row = 0; row <= 2; row++)
     {
-        for (int i = 0; i < 3; ++i)
+        for (int col = 0; col <= 3; col++)
         {
-            if (board[i + j][i] == board[i + j + 1][i + 1] && board[i + j][i] == board[i + 2 + j][i + 2] && board[i + j][i] == board[i + 3 + j][i + 3] && board[i + j][i] != 0)
+            if (board[row][col] == board[row + 1][col + 1] && board[row + 2][col + 2] == board[row + 3][col + 3] && board[row][col] == board[row + 3][col + 3] && board[row][col] != 0)
             {
                 return 1;
             }
@@ -305,11 +322,11 @@ int checkDiagonal2()
 // Effects: checks if there is a winner on the second diagonal. Returns 1 if there is a winner, 0 if there is no winner.
 // Testing Strategy: tested with a board with a winner, a board with no winner, and a board with a tie.
 {
-    for (int j = 0; j < 4; ++j)
+    for (int row = 0; row <= 2; row++)
     {
-        for (int i = 3; i < 5; ++i)
+        for (int col = 6; col >= 3; col--)
         {
-            if (board[j][i] == board[j + 1][i - 1] && board[j][i] == board[j + 2][i - 2] && board[j][i] == board[j + 3][i - 3] && board[j][i] != 0)
+            if (board[row][col] == board[row + 1][col - 1] && board[row + 2][col - 2] == board[row + 3][col - 3] && board[row][col] == board[row + 3][col - 3] && board[row][col] != 0)
             {
                 return 1;
             }
@@ -466,24 +483,25 @@ int checkWinningSide(int side)
         }
     }
 
-    // check diagonal
-    for (int j = 0; j < 4; ++j)
+    // check diagonal1
+    for (int i = 0; i < 3; i++)
     {
-        for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 4; j++)
         {
-            if (board[i + j][i] == board[i + j + 1][i + 1] && board[i + j][i] == board[i + 2 + j][i + 2] && board[i + j][i] == board[i + 3 + j][i + 3] && board[i + j][i] == side)
+            if (board[i][j] == side && board[i + 1][j + 1] == side && board[i + 2][j + 2] == side && board[i + 3][j + 3] == side)
             {
                 winningSide = 1;
             }
         }
     }
 
+
     // check diagonal2
-    for (int j = 0; j < 4; ++j)
+    for (int i = 0; i < 3; i++)
     {
-        for (int i = 3; i < 5; ++i)
+        for (int j = 6; j >= 3; j--)
         {
-            if (board[j][i] == board[j + 1][i - 1] && board[j][i] == board[j + 2][i - 2] && board[j][i] == board[j + 3][i - 3] && board[j][i] == side)
+            if (board[i][j] == side && board[i + 1][j - 1] == side && board[i + 2][j - 2] == side && board[i + 3][j - 3] == side)
             {
                 winningSide = 1;
             }
@@ -502,25 +520,23 @@ minimaxReturn minimax(int depth, int alpha, int beta, int maximizingPlayer)
 // Effects: returns the best move for the computer
 // Testing Strategy: tested by running the program and checking if the computer makes the best move
 {
-
-/*     printf("depth: %d\n", depth);
- */    minimaxReturn ret;
+    minimaxReturn ret;
     int check = checkWinningSide(2) - checkWinningSide(1);
-    if (depth == 0 || check == 1 || check == -1)
+    if (depth == 0 || checkWinner() == 1)
     {
-         if (check == 1 || check == -1)
+        if (checkWinner() == 1)
         {
             checkWinner();
             if (check == 1)
             {
                 ret.column = -2;
-                ret.score = 1000000;
+                ret.score = 100000000;
                 return ret;
             }
             else if (check == -1)
             {
                 ret.column = -2;
-                ret.score = -1000000;
+                ret.score = -100000000;
                 return ret;
             }
             else // game is over, no more valid moves
@@ -533,7 +549,7 @@ minimaxReturn minimax(int depth, int alpha, int beta, int maximizingPlayer)
         else // depth is zero
         {
             ret.column = -2;
-            ret.score = evaluateForAI();
+            ret.score = evaluateLine();
             return ret;
         }
     }
@@ -614,161 +630,130 @@ minimaxReturn minimax(int depth, int alpha, int beta, int maximizingPlayer)
     }
 }
 
-// function that evaluates the position for each player and gives a score based on the favorability of the position
-int evaluateForAI()
+// evaluate window function 
+int evaluateWindow(int window[], int side)
 {
     int score = 0;
+    int oppSide = 3 - side;
 
-    // check horizontal
-    for (int i = 0; i < 6; i++)
+    int countSide = 0;
+    int countOppSide = 0;
+    int countEmpty = 0;
+
+    for (int i = 0; i < 4; i++)
     {
-        for (int j = 0; j < 4; j++)
+        if (window[i] == side)
         {
-            if (board[i][j] == 2 && board[i][j + 1] == 2 && board[i][j + 2] == 2 && board[i][j + 3] == 2)
-            {
-                score += 100;
-            }
-            else if (board[i][j] == 2 && board[i][j + 1] == 2 && board[i][j + 2] == 2)
-            {
-                score += 10;
-            }
-            else if (board[i][j] == 2 && board[i][j + 1] == 2)
-            {
-                score += 2;
-            }
-
-            else if (board[i][j] == 1 && board[i][j + 1] == 1 && board[i][j + 2] == 1 && board[i][j+3] == 1)
-            {
-                score -= 1000;
-            }
-            else if (board[i][j] == 1 && board[i][j + 1] == 1 && board[i][j + 2] == 1)
-            {
-                score -= 100;
-            }
-            else if (board[i][j] == 1 && board[i][j + 1] == 1)
-            {
-                score -= 10;
-            }
-            else if (board[i][j] == 1)
-            {
-                score -= 2;
-            }
+            countSide++;
+        }
+        else if (window[i] == oppSide)
+        {
+            countOppSide++;
+        }
+        else
+        {
+            countEmpty++;
         }
     }
 
-    // check vertical
-    for (int i = 0; i < 3; i++)
+    if (countSide == 4)
     {
-        for (int j = 0; j < 7; j++)
-        {
-            if (board[i][j] == 2 && board[i + 1][j] == 2 && board[i + 2][j] == 2 && board[i + 3][j] == 2)
-            {
-                score += 100;
-            } 
-            else if (board[i][j] == 2 && board[i + 1][j] == 2 && board[i + 2][j] == 2)
-            {
-                score += 10;
-            }
-            else if (board[i][j] == 2 && board[i + 1][j] == 2)
-            {
-                score += 2;
-            }
-
-            else if (board[i][j] == 1 && board[i + 1][j] == 1 && board[i + 2][j] == 1 && board[i + 3][j] == 1)
-            {
-                score -= 1000;
-            }
-            else if (board[i][j] == 1 && board[i + 1][j] == 1 && board[i + 2][j] == 1)
-            {
-                score -= 100;
-            }
-            else if (board[i][j] == 1 && board[i + 1][j] == 1)
-            {
-                score -= 10;
-            }
-            else if (board[i][j] == 1)
-            {
-                score -= 2;
-            }
-        }
+        score += 100;
+    }
+    else if (countSide == 3 && countEmpty == 1)
+    {
+        score += 5;
+    }
+    else if (countSide == 2 && countEmpty == 2)
+    {
+        score += 2;
     }
 
-    // check diagonal
-    for (int j = 0; j < 4; ++j)
+    if (countOppSide == 3 && countEmpty == 1)
     {
-        for (int i = 0; i < 3; ++i)
-        {
-            if (board[i + j][i] == 2 && board[i + j + 1][i + 1] == 2 && board[i + j][i] == 2 && board[i + 2 + j][i + 2] == 2 && board[i + j][i] == board[i + 3 + j][i + 3] && board[i + j][i] == 2)
-            {
-                score += 100;
-            }
-            else if (board[i + j][i] == 2 && board[i + j + 1][i + 1] == 2 && board[i + j][i] == 2 && board[i + 2 + j][i + 2] == 2)
-            {
-                score += 10;
-            }
-            else if (board[i + j][i] == 2 && board[i + j + 1][i + 1] == 2 && board[i + j][i] == 2)
-            {
-                score += 2;
-            }
-
-            else if (board[i + j][i] == 1 && board[i + j + 1][i + 1] == 1 && board[i + j][i] == 1 && board[i + 2 + j][i + 2] == 1 && board[i + j][i] == board[i + 3 + j][i + 3] && board[i + j][i] == 1)
-            {
-                score -= 1000;
-            }
-            else if (board[i + j][i] == 1 && board[i + j + 1][i + 1] == 1 && board[i + j][i] == 1 && board[i + 2 + j][i + 2] == 1)
-            {
-                score -= 100;
-            }
-            else if (board[i + j][i] == 1 && board[i + j + 1][i + 1] == 1 && board[i + j][i] == 1)
-            {
-                score -= 10;
-            }
-            else if (board[i + j][i] == 1)
-            {
-                score -= 2;
-            }
-        }
-    }
-
-    // check diagonal
-    for (int j = 0; j < 4; ++j)
-    {
-        for (int i = 3; i < 5; ++i)
-        {
-            if (board[j][i] == 2 && board[j + 1][i - 1] == 2 && board[j + 2][i - 2] == 2 && board[j + 3][i - 3] == 2)
-            {
-                score += 100;
-            }
-            else if (board[j][i] == 2 && board[j + 1][i - 1] == 2 && board[j + 2][i - 2] == 2)
-            {
-                score += 10;
-            }
-            else if (board[j][i] == 2 && board[j + 1][i - 1] == 2)
-            {
-                score += 2;
-            }
-
-            else if (board[j][i] == 1 && board[j + 1][i - 1] == 1 && board[j + 2][i - 2] == 1 && board[j + 3][i - 3] == 1)
-            {
-                score -= 1000;
-            }
-            else if (board[j][i] == 1 && board[j + 1][i - 1] == 1 && board[j + 2][i - 2] == 1)
-            {
-                score -= 100;
-            }
-            else if (board[j][i] == 1 && board[j + 1][i - 1] == 1)
-            {
-                score -= 10;
-            }
-            else if (board[j][i] == 1)
-            {
-                score -= 2;
-            }
-        }
+        score -= 4;
     }
 
     return score;
 }
+
+// scorePosition function that evaluates the board
+int evaluateLine()
+{
+    int score = 0;
+
+    // score center column
+    int centerArray[6];
+    for (int i = 0; i < 6; i++)
+    {
+        centerArray[i] = board[i][3];
+    }
+    int centerCount = 0;
+    for (int i = 0; i < 6; i++)
+    {
+        if (centerArray[i] == 2)
+        {
+            centerCount++;
+        }
+    }
+    score += centerCount * 3;
+
+    // score horizontal
+    for (int i = 0; i < 6; i++)
+    {
+        int rowArray[7];
+        for (int j = 0; j < 7; j++)
+        {
+            rowArray[j] = board[i][j];
+        }
+        for (int j = 0; j < 4; j++)
+        {
+            int window[4] = { rowArray[j], rowArray[j + 1], rowArray[j + 2], rowArray[j + 3] };
+            score += evaluateWindow(window, 2);
+        }
+    }
+
+    // score vertical
+    for (int i = 0; i < 7; i++)
+    {
+        int colArray[6];
+        for (int j = 0; j < 6; j++)
+        {
+            colArray[j] = board[j][i];
+        }
+        for (int j = 0; j < 3; j++)
+        {
+            int window[4] = { colArray[j], colArray[j + 1], colArray[j + 2], colArray[j + 3] };
+            score += evaluateWindow(window, 2);
+        }
+    }
+
+    // score positive sloped diagonal
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            int window[4] = { board[i][j], board[i + 1][j + 1], board[i + 2][j + 2], board[i + 3][j + 3] };
+            score += evaluateWindow(window, 2);
+        }
+    }
+
+    // score negative sloped diagonal
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            int window[4] = { board[i + 3][j], board[i + 2][j + 1], board[i + 1][j + 2], board[i][j + 3] };
+            score += evaluateWindow(window, 2);
+        }
+    }
+    
+    return score;
+}
+
+
+
+
 
 
 int main()
