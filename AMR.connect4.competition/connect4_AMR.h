@@ -27,18 +27,18 @@ typedef struct minimaxReturn minimaxReturn;
 
 
 // function declarations
-int make_move_AMR(int board[ROWS][COLS]);
-minimaxReturn minimax_AMR(int board[ROWS][COLS], int depth, int alpha, int beta, int maximizingPlayer);
-int checkWinningSide_AMR(int board[ROWS][COLS], int side);
-int checkWinner_AMR(int board[ROWS][COLS]);
-int evaluateLine_AMR(int board[ROWS][COLS]);
+int make_move_AMR(int **board);
+minimaxReturn minimax_AMR(int **board, int depth, int alpha, int beta, int maximizingPlayer);
+int checkWinningSide_AMR(int **board, int side);
+int checkWinner_AMR(int **board);
+int evaluateLine_AMR(int **board);
 int evaluateWindow_AMR(int window[], int side);
-int firstEmpty_AMR(int board[ROWS][COLS], int column);
-void removePin_AMR(int board[ROWS][COLS], int column);
-void dropPin_AMR(int board[ROWS][COLS], int column, int side);
-int checkVertical_AMR(int board[ROWS][COLS]);
-int checkHorizontal_AMR(int board[ROWS][COLS]);
-int checkDiagonal1_AMR(int board[ROWS][COLS]);
-int checkDiagonal2_AMR(int board[ROWS][COLS]);
+int firstEmpty_AMR(int **board, int column);
+void removePin_AMR(int **board, int column);
+void dropPin_AMR(int **board, int column, int side);
+int checkVertical_AMR(int **board);
+int checkHorizontal_AMR(int **board);
+int checkDiagonal1_AMR(int **board);
+int checkDiagonal2_AMR(int **board);
 
 #endif // FUNCTIONS_PHASE2_H

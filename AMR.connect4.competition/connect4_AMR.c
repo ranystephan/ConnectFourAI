@@ -7,8 +7,11 @@
 #include <string.h> 
 #include "connect4_AMR.h"
 
+int state; // declares the state of the board (1 if first player, 2 otherwise)
+
+
 //prototypes
-int make_move_AMR();
+int make_move_AMR(int **board);
 minimaxReturn minimax_AMR();
 int checkWinningSide_AMR();
 int checkWinner_AMR();
@@ -21,22 +24,114 @@ int checkVertical_AMR();
 int checkHorizontal_AMR();
 int checkDiagonal1_AMR();
 int checkDiagonal2_AMR();
+void displayBoard_AMR();
+void declareState_AMR();
 
+int main()
+{
+    int **board = (int **)malloc(6 * sizeof(int *));
+    for (int i = 0; i < 6; i++)
+    {
+        board[i] = (int *)malloc(7 * sizeof(int));
+    }
+
+    dropPin_AMR(board, 3, 1);
+    dropPin_AMR(board, 3, 2);
+    dropPin_AMR(board, 1, 1);
+    dropPin_AMR(board, 2, 2);
+    dropPin_AMR(board, 4, 1);
+    dropPin_AMR(board, 3, 2);
+    dropPin_AMR(board, 4, 1);
+    dropPin_AMR(board, 3, 2);
+    dropPin_AMR(board, 3, 1);
+    dropPin_AMR(board, 4, 2);
+    dropPin_AMR(board, 4, 1);
+    dropPin_AMR(board, 6, 2);
+    dropPin_AMR(board, 1, 1);
+    dropPin_AMR(board, 3, 2);
+    dropPin_AMR(board, 1, 1);
+    dropPin_AMR(board, 1, 2);
+    dropPin_AMR(board, 4, 1);
+    dropPin_AMR(board, 4, 2);
+    dropPin_AMR(board, 0, 1);
+    dropPin_AMR(board, 0, 2);
+    dropPin_AMR(board, 0, 1);
+    dropPin_AMR(board, 0, 2);
+    dropPin_AMR(board, 0, 1);
+    dropPin_AMR(board, 0, 2);
+    dropPin_AMR(board, 6, 1);
+    dropPin_AMR(board, 1, 2);
+    dropPin_AMR(board, 1, 1);
+    dropPin_AMR(board, 2, 2);
+    dropPin_AMR(board, 5, 1);
+    dropPin_AMR(board, 5, 2);
+
+
+    int columnNumber = make_move_AMR(board);
+    dropPin_AMR(board, columnNumber, state);
+    printf("\n");
+    displayBoard_AMR(board);
+}
+
+
+void declareState_AMR(int **board)
+{
+    // count number of 1's and 2's
+    int count1 = 0;
+    int count2 = 0;
+    for (int i = 0; i < ROWS; i++)
+    {
+        for (int j = 0; j < COLS; j++)
+        {
+            if (board[i][j] == 1)
+            {
+                count1++;
+            }
+            else if (board[i][j] == 2)
+            {
+                count2++;
+            }
+        }
+    }
+    if (count1 > count2)
+    {
+        state = 2;
+    }
+    else
+    {
+        state = 1;
+    }
+}
+
+
+// displayBoard_AMR function that displays the board
+void displayBoard_AMR(int **board)
+{
+    for (int i = 0; i < ROWS; i++)
+    {
+        for (int j = 0; j < COLS; j++)
+        {
+            printf("%d ", board[i][j]);
+        }
+        printf("\n");
+    }
+}
 
 //NOTE: OUR CODE WORKS CONSIDERING THE BOT MOVE IS 2 ON THE BOARD, since the maximizingPlayer is 2 (which is us)
-int make_move_AMR(int board[6][7])
+int make_move_AMR(int **board)
 {
+    declareState_AMR(board);
     int columnNumber = 0;
 
-    columnNumber = minimax_AMR(board, 10, -10000000, 10000000, 2).column;
+    columnNumber = minimax_AMR(board, 10, -10000000, 10000000, state).column;
 
     // Note: the clumn number is an index, so we need to add 1 to it to visualize it on the board
-    printf("%d", columnNumber);
+    printf("%d", columnNumber + 1);
     return columnNumber;
 }
-int firstEmpty_AMR(int board[6][7], int column)
+int firstEmpty_AMR(int **board, int column)
 {
-    for (int j = 6; j >= 0; j--)
+    for (int j = 5; j >= 0; j--)
     {
         if (board[j][column] == 0)
         {
@@ -47,7 +142,7 @@ int firstEmpty_AMR(int board[6][7], int column)
 }
 
 // removePin_AMR function removes the highest pin in the column
-void removePin_AMR(int board[6][7], int column)
+void removePin_AMR(int **board, int column)
 {
     for (int i = 0; i < 6; i++)
     {
@@ -60,14 +155,15 @@ void removePin_AMR(int board[6][7], int column)
 }
 
 // dropPin_AMR function that takes an int and drops the pin in the column
-void dropPin_AMR(int board[6][7], int column, int side)
+void dropPin_AMR(int **board, int column, int side)
 {
     // If the column is not full, return the row number
     int firstEmptyRow = firstEmpty_AMR(board, column);
+    
     board[firstEmptyRow][column] = side;
 }
 
-minimaxReturn minimax_AMR(int board[ROWS][COLS], int depth, int alpha, int beta, int maximizingPlayer)
+minimaxReturn minimax_AMR(int **board, int depth, int alpha, int beta, int maximizingPlayer)
 // Requires: depth is an integer, alpha and beta are integers, maximizingPlayer is either 1 or 2
 // Modifies: nothing
 // Effects: returns the best move for the computer
@@ -180,7 +276,7 @@ minimaxReturn minimax_AMR(int board[ROWS][COLS], int depth, int alpha, int beta,
     }
 }
 
-int checkWinningSide_AMR(int board[ROWS][COLS], int side)
+int checkWinningSide_AMR(int **board, int side)
 // Requires: side is either 1 or 2
 // Modifies: nothing
 // Effects: checks if there is a winner horizontally. Returns 1 if there is a winner, 0 if there is no winner.
@@ -240,7 +336,7 @@ int checkWinningSide_AMR(int board[ROWS][COLS], int side)
     return winningSide;
 }
 
-int checkWinner_AMR(int board[ROWS][COLS])
+int checkWinner_AMR(int **board)
 // Requires: nothing
 // Modifies: nothing
 // Effects: checks if there is a winner. Returns 1 if there is a winner, 0 if there is no winner.
@@ -270,7 +366,7 @@ int checkWinner_AMR(int board[ROWS][COLS])
 }
 
 // evaluateLine_AMR function that evaluates the board
-int evaluateLine_AMR(int board[ROWS][COLS])
+int evaluateLine_AMR(int **board)
 // Requires: nothing
 // Modifies: nothing
 // Effects: returns the score of the board
@@ -398,7 +494,7 @@ int evaluateWindow_AMR(int window[], int side)
     return score;
 }
 
-int checkHorizontal_AMR(int board[ROWS][COLS])
+int checkHorizontal_AMR(int **board)
 // Requires: nothing
 // Modifies: nothing
 // Effects: checks if there is a winner horizontally. Returns 1 if there is a winner, 0 if there is no winner.
@@ -417,7 +513,7 @@ int checkHorizontal_AMR(int board[ROWS][COLS])
     return 0;
 }
 
-int checkDiagonal1_AMR(int board[ROWS][COLS])
+int checkDiagonal1_AMR(int **board)
 // Requires: nothing
 // Modifies: nothing
 // Effects: checks if there is a winner on the first diagonal. Returns 1 if there is a winner, 0 if there is no winner.
@@ -436,7 +532,7 @@ int checkDiagonal1_AMR(int board[ROWS][COLS])
     return 0;
 }
 
-int checkDiagonal2_AMR(int board[ROWS][COLS])
+int checkDiagonal2_AMR(int **board)
 // Requires: nothing
 // Modifies: nothing
 // Effects: checks if there is a winner on the second diagonal. Returns 1 if there is a winner, 0 if there is no winner.
@@ -455,7 +551,7 @@ int checkDiagonal2_AMR(int board[ROWS][COLS])
     return 0;
 }
 
-int checkVertical_AMR(int board[ROWS][COLS])
+int checkVertical_AMR(int **board)
 // Requires: nothing
 // Modifies: nothing
 // Effects: checks if there is a winner vertically. Returns 1 if there is a winner, 0 if there is no winner.
