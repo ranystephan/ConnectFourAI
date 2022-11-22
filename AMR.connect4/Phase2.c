@@ -15,6 +15,9 @@ char *nameAdvancedBot_AMR = "Advanced Bot";
 char *nameExpertBot_AMR = "Expert Bot";
 double timePlayer_AMR = 0;
 double timePlayer2_AMR = 0;
+int AI_PIECE_AMR;
+int PLAYER_PIECE_AMR;
+int PLAYER2_PIECE_AMR;
 
 // All methods needed for the program
 void resetBoard();
@@ -36,9 +39,9 @@ minimaxReturn minimax();
 int evaluateLine();
 int firstEmpty_AMR();
 
-int firstEmpty_AMR(int board[6][7], int column)
+int firstEmpty_AMR(int **board, int column)
 {
-    for (int j = 6; j >= 0; j--)
+    for (int j = 5; j >= 0; j--)
     {
         if (board[j][column] == 0)
         {
@@ -50,7 +53,7 @@ int firstEmpty_AMR(int board[6][7], int column)
 }
 
 // removePin function removes the highest pin in the column
-void removePin_AMR(int board[6][7], int column)
+void removePin_AMR(int **board, int column)
 {
     for (int i = 0; i < 6; i++)
     {
@@ -66,14 +69,14 @@ void removePin_AMR(int board[6][7], int column)
 
 
 // dropPin function that takes an int and drops the pin in the column
-void dropPin_AMR(int board[6][7], int column, int side)
+void dropPin_AMR(int **board, int column, int side)
 {
     // If the column is not full, return the row number
     int firstEmptyRow = firstEmpty_AMR(board, column);
     board[firstEmptyRow][column] = side;
 }
 
-void playerMove(int board[ROWS][COLS])
+void playerMove(int **board)
 // Requires: nothing
 // Modifies: board
 // Effects: asks the player to make a move
@@ -98,7 +101,7 @@ void playerMove(int board[ROWS][COLS])
         }
         else
         {
-            dropPin_AMR(board, columnNumber, 1);
+            dropPin_AMR(board, columnNumber, PLAYER_PIECE_AMR);
             break;
         }
     } while (board[0][columnNumber] != 0);
@@ -107,7 +110,7 @@ void playerMove(int board[ROWS][COLS])
     timePlayer_AMR += ((double)(end - start));
 }
 
-void player2Move(int board[ROWS][COLS])
+void player2Move(int **board)
 // Requires: nothing
 // Modifies: board
 // Effects: asks the player to make a move
@@ -131,7 +134,7 @@ void player2Move(int board[ROWS][COLS])
         }
         else
         {
-            dropPin_AMR(board, columnNumber, 2);
+            dropPin_AMR(board, columnNumber, PLAYER2_PIECE_AMR);
             break;
         }
     } while (board[0][columnNumber] != 0);
@@ -141,7 +144,7 @@ void player2Move(int board[ROWS][COLS])
 }
 
 // Function to make a move for the Novice Bot. Note that the Novice Bot is a random bot, and does not use any AI
-void NoviceBotMove(int board[ROWS][COLS])
+void NoviceBotMove(int **board)
 // Requires: nothing
 // Modifies: board
 // Effects: makes a move for the Novice Bot.
@@ -153,9 +156,9 @@ void NoviceBotMove(int board[ROWS][COLS])
     printf("Novice Bot is now playing...\n\n");
     start = time(NULL);
 
-    columnNumber = minimax(board, 1, -1000000, 1000000, 2).column;
+    columnNumber = minimax(board, 1, -1000000, 1000000, AI_PIECE_AMR).column;
 
-    dropPin_AMR(board, columnNumber, 2);
+    dropPin_AMR(board, columnNumber, AI_PIECE_AMR);
 
     end = time(NULL);
 
@@ -163,7 +166,7 @@ void NoviceBotMove(int board[ROWS][COLS])
 }
 
 // AdvancedBotMove function that uses minimax algorithm with alpha-beta pruning to find the best move to the depth assigned
-void AdvancedBotMove(int board[ROWS][COLS])
+void AdvancedBotMove(int **board)
 // Requires: nothing
 // Modifies: board
 // Effects: executes the move of the advanced bot using the minimax algorithm with alpha-beta pruning, with depth of 3
@@ -175,9 +178,9 @@ void AdvancedBotMove(int board[ROWS][COLS])
     printf("Advanced Bot is now playing...\n\n");
     start = time(NULL);
 
-    columnNumber = minimax(board, 3, -1000000, 1000000, 2).column;
+    columnNumber = minimax(board, 3, -1000000, 1000000, AI_PIECE_AMR).column;
 
-    dropPin_AMR(board, columnNumber, 2);
+    dropPin_AMR(board, columnNumber, AI_PIECE_AMR);
 
     end = time(NULL);
 
@@ -185,7 +188,7 @@ void AdvancedBotMove(int board[ROWS][COLS])
 }
 
 // ExpertBotMove function that uses minimax algorithm with alpha-beta pruning to find the best move to the depth assigned
-void ExpertBotMove(int board[ROWS][COLS])
+void ExpertBotMove(int **board)
 // Requires: nothing
 // Modifies: board
 // Effects: executes the move of the expert bot taken from the minimax algorithm
@@ -201,7 +204,7 @@ void ExpertBotMove(int board[ROWS][COLS])
         printf("\nExpert Bot is now playing...\n");
         start = time(NULL);
 
-        columnNumber = minimax(board, 10, -10000000, 10000000, 2).column;
+        columnNumber = minimax(board, 10, -10000, 10000, AI_PIECE_AMR).column;
 
         // check if column is full or not
         if (board[0][columnNumber] != 0)
@@ -212,7 +215,7 @@ void ExpertBotMove(int board[ROWS][COLS])
         {
             printf("Column number chosen by the bot: %d \n\n", columnNumber + 1);
             
-            dropPin_AMR(board, columnNumber, 2);
+            dropPin_AMR(board, columnNumber, AI_PIECE_AMR);
             break;
         }
     } while (board[0][columnNumber] != 0);
@@ -250,7 +253,7 @@ void askPlayerNameAndMode()
     }
 }
 
-int checkWinner(int board[ROWS][COLS])
+int checkWinner(int **board)
 // Requires: nothing
 // Modifies: nothing
 // Effects: checks if there is a winner. Returns 1 if there is a winner, 0 if there is no winner.
@@ -279,7 +282,7 @@ int checkWinner(int board[ROWS][COLS])
     }
 }
 
-int checkHorizontal(int board[ROWS][COLS])
+int checkHorizontal(int **board)
 // Requires: nothing
 // Modifies: nothing
 // Effects: checks if there is a winner horizontally. Returns 1 if there is a winner, 0 if there is no winner.
@@ -298,7 +301,7 @@ int checkHorizontal(int board[ROWS][COLS])
     return 0;
 }
 
-int checkDiagonal1(int board[ROWS][COLS])
+int checkDiagonal1(int **board)
 // Requires: nothing
 // Modifies: nothing
 // Effects: checks if there is a winner on the first diagonal. Returns 1 if there is a winner, 0 if there is no winner.
@@ -317,7 +320,7 @@ int checkDiagonal1(int board[ROWS][COLS])
     return 0;
 }
 
-int checkDiagonal2(int board[ROWS][COLS])
+int checkDiagonal2(int **board)
 // Requires: nothing
 // Modifies: nothing
 // Effects: checks if there is a winner on the second diagonal. Returns 1 if there is a winner, 0 if there is no winner.
@@ -336,7 +339,7 @@ int checkDiagonal2(int board[ROWS][COLS])
     return 0;
 }
 
-int checkVertical(int board[ROWS][COLS])
+int checkVertical(int **board)
 // Requires: nothing
 // Modifies: nothing
 // Effects: checks if there is a winner vertically. Returns 1 if there is a winner, 0 if there is no winner.
@@ -355,7 +358,7 @@ int checkVertical(int board[ROWS][COLS])
     return 0;
 }
 
-void resetBoard(int board[ROWS][COLS])
+void resetBoard(int **board)
 // Requires: nothing
 // Modifies: board
 // Effects: resets the board to all 0's
@@ -374,7 +377,7 @@ void resetBoard(int board[ROWS][COLS])
 
 
 
-void displayBoard(int board[ROWS][COLS])
+void displayBoard(int **board)
 // Requires: nothing
 // Modifies: board
 // Effects: displays the board
@@ -397,7 +400,7 @@ void displayBoard(int board[ROWS][COLS])
 }
 
 
-int checkFreeSpaces(int board[ROWS][COLS])
+int checkFreeSpaces(int **board)
 // Requires: nothing
 // Modifies: nothing
 // Effects: checks if there are any free spaces on the board. Returns 1 if there are free spaces, 0 if there are no free spaces.
@@ -430,25 +433,33 @@ int tossCoin()
 
     if (headsOrTails == 1)
     {
+        PLAYER_PIECE_AMR = 1;
+        PLAYER2_PIECE_AMR = 2;
+        AI_PIECE_AMR = 2;
         printf("%s, the coin chose you! You may start playing!\n\n", namePlayer_AMR);
         return 1;
     }
     else
     {
+
         if (mode_AMR == 4)
         {
+            PLAYER_PIECE_AMR = 2;
+            PLAYER2_PIECE_AMR = 1;
             printf("%s, the coin chose you! You may start playing!\n\n", nameOpp_AMR);
             return 2;
         }
         else
         {
+            AI_PIECE_AMR = 1;
+            PLAYER_PIECE_AMR = 2;
             printf("The coin chose the computer! The computer may start playing!\n\n");
             return 2;
         }
     }
 }
 
-int checkWinningSide(int board[ROWS][COLS], int side)
+int checkWinningSide(int **board, int side)
 // Requires: side is either 1 or 2
 // Modifies: nothing
 // Effects: checks if there is a winner horizontally. Returns 1 if there is a winner, 0 if there is no winner.
@@ -508,7 +519,7 @@ int checkWinningSide(int board[ROWS][COLS], int side)
     return winningSide;
 }
 
-minimaxReturn minimax(int board[ROWS][COLS], int depth, int alpha, int beta, int maximizingPlayer)
+minimaxReturn minimax(int **board, int depth, int alpha, int beta, int maximizingPlayer)
 // Requires: depth is an integer, alpha and beta are integers, maximizingPlayer is either 1 or 2
 // Modifies: nothing
 // Effects: returns the best move for the computer
@@ -543,12 +554,12 @@ minimaxReturn minimax(int board[ROWS][COLS], int depth, int alpha, int beta, int
         else // depth is zero
         {
             ret.column = -2;
-            ret.score = evaluateLine(board);
+            ret.score = evaluateLine(board, AI_PIECE_AMR);
             return ret;
         }
     }
 
-    if (maximizingPlayer == 2) // if it is the maximizing player's turn
+    if (maximizingPlayer == AI_PIECE_AMR) // if it is the maximizing player's turn
     {
         int bestScore = -1000000;
         int col;
@@ -562,8 +573,8 @@ minimaxReturn minimax(int board[ROWS][COLS], int depth, int alpha, int beta, int
             if (board[0][i] == 0)
             {
 
-                dropPin_AMR(board, i, 2); // drops the piece on the board
-                int score = minimax(board, depth - 1, alpha, beta, 1).score; // calculates the score of the tree by calling minimax recursively
+                dropPin_AMR(board, i, AI_PIECE_AMR); // drops the piece on the board
+                int score = minimax(board, depth - 1, alpha, beta, PLAYER_PIECE_AMR).score; // calculates the score of the tree by calling minimax recursively
                 removePin_AMR(board, i); // removes the piece from the board
 
                 if (score > bestScore) // adjusting scores according to the best one
@@ -597,8 +608,8 @@ minimaxReturn minimax(int board[ROWS][COLS], int depth, int alpha, int beta, int
         {
             if (board[0][i] == 0)
             {
-                dropPin_AMR(board, i, 1);
-                int score = minimax(board, depth - 1, alpha, beta, 2).score;
+                dropPin_AMR(board, i, PLAYER_PIECE_AMR);
+                int score = minimax(board, depth - 1, alpha, beta, AI_PIECE_AMR).score;
                 removePin_AMR(board, i);
 
                 if (score < bestScore)
@@ -673,7 +684,7 @@ int evaluateWindow(int window[], int side)
 }
 
 // evaluateLine function that evaluates the board
-int evaluateLine(int board[ROWS][COLS])
+int evaluateLine(int **board, int side)
 // Requires: nothing
 // Modifies: nothing
 // Effects: returns the score of the board
@@ -690,7 +701,7 @@ int evaluateLine(int board[ROWS][COLS])
     int centerCount = 0;
     for (int i = 0; i < 6; i++)
     {
-        if (centerArray[i] == 2)
+        if (centerArray[i] == side)
         {
             centerCount++;
         }
@@ -708,7 +719,7 @@ int evaluateLine(int board[ROWS][COLS])
         for (int j = 0; j < 4; j++)
         {
             int window[4] = {rowArray[j], rowArray[j + 1], rowArray[j + 2], rowArray[j + 3]};
-            score += evaluateWindow(window, 2);
+            score += evaluateWindow(window, side);
         }
     }
 
@@ -723,7 +734,7 @@ int evaluateLine(int board[ROWS][COLS])
         for (int j = 0; j < 3; j++)
         {
             int window[4] = {colArray[j], colArray[j + 1], colArray[j + 2], colArray[j + 3]};
-            score += evaluateWindow(window, 2);
+            score += evaluateWindow(window, side);
         }
     }
 
@@ -733,7 +744,7 @@ int evaluateLine(int board[ROWS][COLS])
         for (int j = 0; j < 4; j++)
         {
             int window[4] = {board[i][j], board[i + 1][j + 1], board[i + 2][j + 2], board[i + 3][j + 3]};
-            score += evaluateWindow(window, 2);
+            score += evaluateWindow(window, side);
         }
     }
 
@@ -743,7 +754,7 @@ int evaluateLine(int board[ROWS][COLS])
         for (int j = 0; j < 4; j++)
         {
             int window[4] = {board[i + 3][j], board[i + 2][j + 1], board[i + 1][j + 2], board[i][j + 3]};
-            score += evaluateWindow(window, 2);
+            score += evaluateWindow(window, side);
         }
     }
 
@@ -752,7 +763,11 @@ int evaluateLine(int board[ROWS][COLS])
 
 int main()
 {
-    int board[ROWS][COLS] = {0}; // the board
+    int **board = (int **)malloc(6 * sizeof(int *));
+    for (int i = 0; i < 6; i++)
+    {
+        board[i] = (int *)malloc(7 * sizeof(int));
+    }
 
     int winner = 0;
 

@@ -17,6 +17,8 @@ extern char *nameAdvancedBot_AMR;
 extern char *nameExpertBot_AMR;
 extern double timePlayer_AMR;
 extern double timePlayer2_AMR;
+extern int AI_PIECE_AMR;
+extern int PLAYER_PIECE_AMR;
 
 // macro declarations
 #define ROWS 6
@@ -56,28 +58,28 @@ typedef struct minimaxReturn minimaxReturn;
 #define NAMEPLAYER2 (mode_AMR == 1) ? nameNoviceBot_AMR : (mode_AMR == 2) ? nameAdvancedBot_AMR : (mode_AMR == 3)   ? nameExpertBot_AMR : nameOpp_AMR
 
 //function declarations
-void displayBoard(int board[ROWS][COLS]);
-void resetBoard(int board[ROWS][COLS]);
+void displayBoard(int **board);
+void resetBoard(int **board);
 void askPlayerNameAndMode();
 int tossCoin();
-void playerMove(int board[ROWS][COLS]);
-void player2Move(int board[ROWS][COLS]);
-void NoviceBotMove(int board[ROWS][COLS]);
-void AdvancedBotMove(int board[ROWS][COLS]);
-void ExpertBotMove(int board[ROWS][COLS]);
-int checkWinner(int board[ROWS][COLS]);
-int checkFreeSpaces(int board[ROWS][COLS]);
-int checkVertical(int board[ROWS][COLS]);
-int checkHorizontal(int board[ROWS][COLS]);
-int checkDiagonal1(int board[ROWS][COLS]);
-int checkDiagonal2(int board[ROWS][COLS]);
-int checkWinningSide(int board[ROWS][COLS], int side);
-minimaxReturn minimax(int board[ROWS][COLS], int depth, int alpha, int beta, int maximizingPlayer);
+void playerMove(int **board);
+void player2Move(int **board);
+void NoviceBotMove(int **board);
+void AdvancedBotMove(int **board);
+void ExpertBotMove(int **board);
+int checkWinner(int **board);
+int checkFreeSpaces(int **board);
+int checkVertical(int **board);
+int checkHorizontal(int **board);
+int checkDiagonal1(int **board);
+int checkDiagonal2(int **board);
+int checkWinningSide(int **board, int side);
+minimaxReturn minimax(int **board, int depth, int alpha, int beta, int maximizingPlayer);
 int evaluateWindow(int window[], int side);
-int evaluateLine(int board[ROWS][COLS]);
-int firstEmpty(int board[ROWS][COLS], int column);
-void removePin(int board[ROWS][COLS], int column);
-void dropPin(int board[ROWS][COLS], int column, int side);
+int evaluateLine(int **board, int side);
+int firstEmpty(int **board, int column);
+void removePin(int **board, int column);
+void dropPin(int **board, int column, int side);
 
 
 
