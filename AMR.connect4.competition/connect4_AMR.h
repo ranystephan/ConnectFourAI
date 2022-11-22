@@ -31,7 +31,7 @@ int make_move_AMR(int **board);
 minimaxReturn minimax_AMR(int **board, int depth, int alpha, int beta, int maximizingPlayer);
 int checkWinningSide_AMR(int **board, int side);
 int checkWinner_AMR(int **board);
-int evaluateLine_AMR(int **board);
+int evaluateLine_AMR(int **board, int state);
 int evaluateWindow_AMR(int window[], int side);
 int firstEmpty_AMR(int **board, int column);
 void removePin_AMR(int **board, int column);

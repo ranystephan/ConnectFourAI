@@ -8,7 +8,7 @@
 #include "connect4_AMR.h"
 
 int state; // declares the state of the board (1 if first player, 2 otherwise)
-
+int minPlayer;
 
 //prototypes
 int make_move_AMR(int **board);
@@ -35,38 +35,9 @@ int main()
         board[i] = (int *)malloc(7 * sizeof(int));
     }
 
-    dropPin_AMR(board, 3, 1);
-    dropPin_AMR(board, 3, 2);
-    dropPin_AMR(board, 1, 1);
-    dropPin_AMR(board, 2, 2);
-    dropPin_AMR(board, 4, 1);
-    dropPin_AMR(board, 3, 2);
-    dropPin_AMR(board, 4, 1);
-    dropPin_AMR(board, 3, 2);
-    dropPin_AMR(board, 3, 1);
-    dropPin_AMR(board, 4, 2);
-    dropPin_AMR(board, 4, 1);
-    dropPin_AMR(board, 6, 2);
-    dropPin_AMR(board, 1, 1);
-    dropPin_AMR(board, 3, 2);
-    dropPin_AMR(board, 1, 1);
-    dropPin_AMR(board, 1, 2);
-    dropPin_AMR(board, 4, 1);
-    dropPin_AMR(board, 4, 2);
-    dropPin_AMR(board, 0, 1);
-    dropPin_AMR(board, 0, 2);
-    dropPin_AMR(board, 0, 1);
-    dropPin_AMR(board, 0, 2);
-    dropPin_AMR(board, 0, 1);
-    dropPin_AMR(board, 0, 2);
-    dropPin_AMR(board, 6, 1);
-    dropPin_AMR(board, 1, 2);
-    dropPin_AMR(board, 1, 1);
-    dropPin_AMR(board, 2, 2);
-    dropPin_AMR(board, 5, 1);
-    dropPin_AMR(board, 5, 2);
 
 
+    dropPin_AMR(board, 0, 1);
     int columnNumber = make_move_AMR(board);
     dropPin_AMR(board, columnNumber, state);
     printf("\n");
@@ -96,10 +67,12 @@ void declareState_AMR(int **board)
     if (count1 > count2)
     {
         state = 2;
+        minPlayer = 1;
     }
     else
     {
         state = 1;
+        minPlayer = 2;
     }
 }
 
@@ -117,7 +90,7 @@ void displayBoard_AMR(int **board)
     }
 }
 
-//NOTE: OUR CODE WORKS CONSIDERING THE BOT MOVE IS 2 ON THE BOARD, since the maximizingPlayer is 2 (which is us)
+
 int make_move_AMR(int **board)
 {
     declareState_AMR(board);
@@ -170,7 +143,15 @@ minimaxReturn minimax_AMR(int **board, int depth, int alpha, int beta, int maxim
 // Testing Strategy: tested by running the program and checking if the computer makes the best move
 {
     minimaxReturn ret;
-    int check = checkWinningSide_AMR(board, 2) - checkWinningSide_AMR(board, 1);
+    int check;
+    if (state == 2)
+    {
+        check = checkWinningSide_AMR(board, 2) - checkWinningSide_AMR(board, 1);
+    }
+    else
+    {
+        check = checkWinningSide_AMR(board, 1) - checkWinningSide_AMR(board, 2);
+    }
     if (depth == 0 || checkWinner_AMR(board) == 1)
     {
         if (checkWinner_AMR(board) == 1) // if there is a winner
@@ -198,12 +179,12 @@ minimaxReturn minimax_AMR(int **board, int depth, int alpha, int beta, int maxim
         else // depth is zero
         {
             ret.column = -2;
-            ret.score = evaluateLine_AMR(board);
+            ret.score = evaluateLine_AMR(board, state);
             return ret;
         }
     }
 
-    if (maximizingPlayer == 2) // if it is the maximizing player's turn
+    if (maximizingPlayer == state) // if it is the maximizing player's turn
     {
         int bestScore = -1000000;
         int col;
@@ -217,8 +198,8 @@ minimaxReturn minimax_AMR(int **board, int depth, int alpha, int beta, int maxim
             if (board[0][i] == 0)
             {
 
-                dropPin_AMR(board, i, 2);                                    // drops the piece on the board
-                int score = minimax_AMR(board, depth - 1, alpha, beta, 1).score; // calculates the score of the tree by calling minimax_AMR recursively
+                dropPin_AMR(board, i, state);                                    // drops the piece on the board
+                int score = minimax_AMR(board, depth - 1, alpha, beta, minPlayer).score; // calculates the score of the tree by calling minimax_AMR recursively
                 removePin_AMR(board, i);                                     // removes the piece from the board
 
                 if (score > bestScore) // adjusting scores according to the best one
@@ -252,8 +233,8 @@ minimaxReturn minimax_AMR(int **board, int depth, int alpha, int beta, int maxim
         {
             if (board[0][i] == 0)
             {
-                dropPin_AMR(board, i, 1);
-                int score = minimax_AMR(board, depth - 1, alpha, beta, 2).score;
+                dropPin_AMR(board, i, minPlayer);
+                int score = minimax_AMR(board, depth - 1, alpha, beta, state).score;
                 removePin_AMR(board, i);
 
                 if (score < bestScore)
@@ -366,7 +347,7 @@ int checkWinner_AMR(int **board)
 }
 
 // evaluateLine_AMR function that evaluates the board
-int evaluateLine_AMR(int **board)
+int evaluateLine_AMR(int **board, int side)
 // Requires: nothing
 // Modifies: nothing
 // Effects: returns the score of the board
@@ -383,7 +364,7 @@ int evaluateLine_AMR(int **board)
     int centerCount = 0;
     for (int i = 0; i < 6; i++)
     {
-        if (centerArray[i] == 2)
+        if (centerArray[i] == side)
         {
             centerCount++;
         }
@@ -401,7 +382,7 @@ int evaluateLine_AMR(int **board)
         for (int j = 0; j < 4; j++)
         {
             int window[4] = {rowArray[j], rowArray[j + 1], rowArray[j + 2], rowArray[j + 3]};
-            score += evaluateWindow_AMR(window, 2);
+            score += evaluateWindow_AMR(window, side);
         }
     }
 
@@ -416,7 +397,7 @@ int evaluateLine_AMR(int **board)
         for (int j = 0; j < 3; j++)
         {
             int window[4] = {colArray[j], colArray[j + 1], colArray[j + 2], colArray[j + 3]};
-            score += evaluateWindow_AMR(window, 2);
+            score += evaluateWindow_AMR(window, side);
         }
     }
 
@@ -426,7 +407,7 @@ int evaluateLine_AMR(int **board)
         for (int j = 0; j < 4; j++)
         {
             int window[4] = {board[i][j], board[i + 1][j + 1], board[i + 2][j + 2], board[i + 3][j + 3]};
-            score += evaluateWindow_AMR(window, 2);
+            score += evaluateWindow_AMR(window, side);
         }
     }
 
@@ -436,7 +417,7 @@ int evaluateLine_AMR(int **board)
         for (int j = 0; j < 4; j++)
         {
             int window[4] = {board[i + 3][j], board[i + 2][j + 1], board[i + 1][j + 2], board[i][j + 3]};
-            score += evaluateWindow_AMR(window, 2);
+            score += evaluateWindow_AMR(window, side);
         }
     }
 
